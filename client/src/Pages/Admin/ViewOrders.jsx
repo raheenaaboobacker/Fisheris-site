@@ -18,9 +18,9 @@ export default function ViewOrders() {
   })
 },[ message])
 
-const approvedata=(id)=>{
+const shiped=(id)=>{
  console.log(id);
-  axios.post(`http://localhost:5000/order/approve-vessel-request/${id}`)
+  axios.post(`http://localhost:5000/order/shipped/${id}`)
    .then(response=>{
     if(response.data.success==true){
      swal(response.data.message)
@@ -49,7 +49,8 @@ const approvedata=(id)=>{
 <div className="card">
 <img style={{height: 170, width: '100%', display: 'block'}} src={`./upload/${item?.orderBookData.image}`} alt="Card image" />
 <div className="card-body">
-<h3 className="card-title">{item?.orderBookData.pprice}</h3>
+<h3 className="card-title">{item?.orderBookData.pname}   <span style={{marginLeft:"20px"}}>{item?.orderBookData.pprice}₹</span>   </h3>
+<h5 className="card-text">Quantity: {item?.productdata[0]?.qty}</h5>
 <h5 className="card-text">User Details</h5>
 <p className="card-text">Name: {item?.userData?.email}</p>
 <p className="card-text">Address: {item?.userData?.address}</p>
@@ -57,8 +58,10 @@ const approvedata=(id)=>{
 {/* <p className="card-text">Email: {item?.userdata?.email}</p>
 <p className="card-text">License No: {item?.userdata?.license}</p>
 <p className="card-text">Monthly Income: {item?.userdata?.monthlyinc}</p> */}
-
-
+{/* {console.log(item?.userData?ordersa)} */}
+{item?.orderstatus == "ordered" ?
+   <input type="submit" style={{width:"150px",marginTop:"10px"}} onClick={()=>shiped(item._id)} className="submit" value="Shipped" />
+   :<p>Shipped</p>}
 </div>
 </div>
 </div>

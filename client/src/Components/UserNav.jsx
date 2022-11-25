@@ -151,6 +151,7 @@ export default function UserNav() {
                           							
                          <li><a href="/userContact" title="Contact Us">Contact Us</a></li>
                          <li><a href="/cart" title="Cart">Cart</a></li>
+                         <li><a href="/order" title="Cart">Orders</a></li>
 
                          <li><a onClick={logout} title="Contact Us">Logout</a></li>
                     </ul>						

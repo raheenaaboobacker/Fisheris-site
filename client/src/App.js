@@ -43,6 +43,7 @@ import BookedRooms from './Pages/FisherMan/BookedRooms';
 import UserCntact from './Pages/users/UserCntact';
 import FisherContact from './Pages/FisherMan/FisherContact';
 import BookedVessels from './Pages/FisherMan/BookedVessels';
+import OrderTable from './Pages/users/OrderTable';
 
 
 function App() {
@@ -639,6 +640,7 @@ function App() {
 			<Route path="/vieworderitems" element={<ViewOrders/>}/>
 			<Route path="/editproduct/:id" element={<EditProduct/>}/>
 			<Route path="/fisherRegister" element={<FishermanRegister/>}/>
+			<Route path="/order" element={<OrderTable/>}/>
 
       </Routes>
  </BrowserRouter>

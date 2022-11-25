@@ -11,7 +11,15 @@ export default function WheatherAlert() {
 	var month = dateObj.getUTCMonth() + 1;
 	var day = dateObj.getUTCDate();
 	var year = dateObj.getUTCFullYear();
-	var currentdate = year + "-0" + month + "-" + day;
+	if(month<10){
+		var currentdate = year + "-0" + month + "-" + day;
+	}else if(day<10){
+		var currentdate = year+ "-" + month + "-0" + day;
+	}
+	else{
+		var currentdate = year+ "-" + month + "-" + day;
+	}
+	
 	const [lat, setLat] = useState([]);
 	const [long, setLong] = useState([]);
 	const [data, setData] = useState([]);
@@ -75,7 +83,7 @@ export default function WheatherAlert() {
 	{Math.floor(data?.wind?.speed*3.6) < 62||data?.wheather?.id===502||data?.weather?.id===503||data?.weather?.id===504||
 	data?.weather?.id===202||data?.weather?.id===232?
 	<marquee style={{color:"#f51105",fontSize:"25px"}} className=" marquee" >Sea condition will be rough during next 12 hours. So fisherman are advised not venture into sea </marquee>:null}
-	{troll&&troll.map(item=>(<marquee style={{color:"#f51105",fontSize:"25px"}} className=" marquee" >{item.message}</marquee>))}
+	{troll&&troll.map(item=>(<marquee style={{color:"#f51105",fontSize:"25px"}} className=" marquee" >{item.message}{console.log("dxfcgvhbjn",item.message)};</marquee>))}
 
 	</div>
 	<div className="container">

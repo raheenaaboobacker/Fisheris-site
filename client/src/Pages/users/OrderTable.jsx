@@ -5,12 +5,11 @@ import React, { useEffect, useState } from 'react'
 import UserNav from '../../Components/UserNav';
 import Footer from '../../Components/Footer';
 
-export default function Cart() {
+export default function OrderTable() {
+  const [message, setMessage] = useState(true)
     const navigate=useNavigate();
     const [paymentdata,setPaymentdata]=useState({})
-    const [message, setMessage] = useState(true)
     const [cartdata, setCartdata] = useState([])
-    const [total,setTotal]=useState([])
     const [token, setToken] = useState(localStorage.getItem("token"))
 
     useEffect(() => {
@@ -20,7 +19,7 @@ export default function Cart() {
   }, [])
   
     useEffect(() => {
-        fetch('http://localhost:5000/cart/viewCartItem', {
+        fetch('http://localhost:5000/order/viewOrder', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -34,11 +33,7 @@ export default function Cart() {
                     if(data.data.length>0){
                     setCartdata(data.data)
                     console.log(cartdata);
-                    const newTotal = cartdata.reduce((total, cartItem) => {
-                        return total + cartItem.qty * cartItem.price;
-                      }, 0);
-                      setTotal(newTotal);
-                      console.log(total);
+                    
                     }
                }
                 
@@ -47,69 +42,28 @@ export default function Cart() {
    
 
     const deleteItem=(pid)=>{
-        let id=pid;
-        console.log(id);
-        fetch(`http://localhost:5000/cart/deletecartitem/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-        })
-            .then(res => res.json())
-            .then((data) => {
-                console.log("Result========", data)
-                if (data.success == true) {
-                    swal(data.message)
-                    setMessage(!message)
-                  window.location.reload()
-                }
-                else {
-
-                    swal(data.message)
-                }
-            })
-    }
-
-    const handleInputChange=(e)=>{
-      const {name,value}=e.target
-      setPaymentdata({
-          ...paymentdata,
-          [name]:value
+      let id=pid;
+      console.log(id);
+      fetch(`http://localhost:5000/order/deleteorderitem/${id}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+          },
       })
-      console.log(paymentdata);
+          .then(res => res.json())
+          .then((data) => {
+              console.log("Result========", data)
+              if (data.success == true) {
+                  swal(data.message)
+                  setMessage(!message)
+              }
+              else {
+
+                  swal(data.message)
+              }
+          })
   }
-
-
-const submitForm=(e)=>{
-  console.log("hai");
-  e.preventDefault();
-  
-  
-    fetch("http://localhost:5000/order/orderbook", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-    })
-      .then(res => res.json())
-      .then((data) => {
-        console.log("Result========", data)
-        if (data.success == true) {
-
-          alert(data.message)
-          window.location.reload(false);
-          navigate("/order")
-                }
-        else {
-
-          alert(data.message)
-          window.location.reload(false);
-        }
-      })
-  
-}
 
 
   return (
@@ -119,7 +73,7 @@ const submitForm=(e)=>{
   <div className="container">
     <div className="row justify-content-center">
       <div className="col-md-6 text-center mb-4">
-        <h2 className="heading-section">Cart</h2>
+        <h2 className="heading-section">ORDER TABLE</h2>
       </div>
     </div>
     <div className="row">
@@ -132,6 +86,8 @@ const submitForm=(e)=>{
                 <th>Product</th>
                 <th>Price</th>
                 <th>Quantity</th>
+                <th>Order Date</th>
+                <th>Order Details</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -141,25 +97,37 @@ const submitForm=(e)=>{
               <tr className="alert" role="alert">
               
               <td>
-                <img className="img" src={`./upload/${data?.cartData?.image}`} />
+                <img className="img" src={`./upload/${data?.orderBookData?.image}`} />
               </td>
               <td>
                 <div className="email">
-                  <span>{data?.cartData?.pname} </span>
-                  <span>{data?.cartData?.desc}</span>
+                  <span>{data?.orderBookData?.pname} </span>
+                  <span>{data?.orderBookData?.desc}</span>
                 </div>
               </td>
-              <td>₹ {data?.cartData?.pprice}</td>
+              <td>₹ {data?.orderBookData?.pprice}</td>
               <td className="quantity">
                 <div className="input-group">
                   <input type="text" name="quantity" className="quantity form-control input-number" value="1"  disabled />
                 </div>
               </td>
-            
               <td>
-                <button type="button" className="close" onClick={()=>{deleteItem(data._id)}}>
+                <div className="email">
+                <span>{data?.date} </span>
+                <span> </span>
+                </div>
+              </td>
+              <td>
+                <div className="email">
+                  <span>{data?.orderstatus} </span>
+                  <span> </span>
+                </div>
+              </td>
+              <td>
+                {data?.orderstatus!="Shipped"?(<button type="button" className="close" onClick={()=>{deleteItem(data._id)}}>
                   <span aria-hidden="true"><i className="fa fa-close" /></span>
-                </button>
+                </button>):<></>}
+              
                 
               </td>
             </tr>
@@ -169,9 +137,7 @@ const submitForm=(e)=>{
           </table>
         </div>
       </div>
-      <button style={{width:"100px",height:"50px"}} type="button" className="btn btn-primary launch" data-toggle="modal" data-target="#staticBackdrop">
-      ₹ {cartdata?.reduce((total, cartItem) => total + cartItem.qty * cartItem.price , 0)} Pay Now
-        </button>
+      
     </div>
     
   </div>
@@ -186,27 +152,27 @@ const submitForm=(e)=>{
                             <div className="tabs mt-3">
                                 
                                 <div className="tab-content" id="myTabContent">
-                                <form onSubmit={submitForm}>
+                                <form >
                                <div className="row">
                                     <div className="col-md-12">
                                       <div className="card p-3">
                                         <h6 className="text-uppercase">Payment details</h6>
                                         <div className="inputbox mt-3">
                                            <input type="text"  className="form-control" required name="name"
-                                        onChange={handleInputChange} value={paymentdata.name}/> <span>Name on card</span>
+                                         value={paymentdata.name}/> <span>Name on card</span>
                                          </div>
                                           <div className="inputbox mt-3">
                                           <input type="text"  className="form-control" required 
                                             name="c_no"
-                                            onChange={handleInputChange} value={paymentdata.c_no}/> <i className="fa fa-credit-card" /> <span>Card Number</span> 
+                                            value={paymentdata.c_no}/> <i className="fa fa-credit-card" /> <span>Card Number</span> 
                                          </div> 
                                          <div className="inputbox mt-3">
                                          <input type="text"  className="form-control" required name="exp_date"
-                                        onChange={handleInputChange} value={paymentdata.exp_date} /> <span>Expiry</span>
+                                        value={paymentdata.exp_date} /> <span>Expiry</span>
                                          </div>
                                          <div className="inputbox mt-3">
                                          <input type="text"  className="form-control" required name="cvv"
-                                        onChange={handleInputChange} value={paymentdata.cvv} /> <span>CVV</span>
+                                         value={paymentdata.cvv} /> <span>CVV</span>
                                          </div>
 
 
@@ -232,3 +198,4 @@ const submitForm=(e)=>{
     </div>
   )
 }
+
